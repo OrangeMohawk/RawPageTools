@@ -1,4 +1,6 @@
-﻿namespace RawPageHashGetter
+﻿using System.Windows;
+
+namespace Compression
 {
 	/// <summary>
 	/// Interaction logic for App.xaml

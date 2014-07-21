@@ -1,47 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Crc32;
 
 namespace RawPageHashGetter
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainWindow
 	{
-		// crc = crc32 with xor of 0x00000000
-		// hash = sha-1 with salt used by gamesaves and etc.
-		// first block hash = salted sha-1 on first 0x400 bytes
-		// last block hash = salted sha-1 on last 0x400 bytes
-
-		// salt: EDD43009666D5C4A5C3657FAB40E022F535AC6C9EE471F01F1A44756B7714F1C36EC
-
-		private byte[] _salt = { 0xED, 0xD4, 0x30, 0x09, 0x66, 0x6D, 0x5C, 0x4A, 0x5C, 0x36, 0x57, 0xFA, 0xB4, 0x0E, 0x02, 0x2F, 0x53, 0x5A, 0xC6, 0xC9, 0xEE, 0x47, 0x1F, 0x01, 0xF1, 0xA4, 0x47, 0x56, 0xB7, 0x71, 0x4F, 0x1C, 0x36, 0xEC };
+		private readonly byte[] _salt = { 0xED, 0xD4, 0x30, 0x09, 0x66, 0x6D, 0x5C, 0x4A, 0x5C, 0x36, 0x57, 0xFA, 0xB4, 0x0E, 0x02, 0x2F, 0x53, 0x5A, 0xC6, 0xC9, 0xEE, 0x47, 0x1F, 0x01, 0xF1, 0xA4, 0x47, 0x56, 0xB7, 0x71, 0x4F, 0x1C, 0x36, 0xEC };
 		private byte[] _entireBufferHash, _firstChunkHash, _lastChunkHash;
 		private uint _crc;
 
-		public MainWindow()
-		{
-		}
-
 		private void MainWindow_PreviewDragEnter(object sender, DragEventArgs e)
 		{
-			if (e.Data.GetDataPresent(DataFormats.FileDrop, true) == true)
+			if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
 				e.Effects = DragDropEffects.Move;
 			e.Handled = true;
 		}
