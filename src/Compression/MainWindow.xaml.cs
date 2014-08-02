@@ -1,7 +1,6 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Compression
@@ -25,22 +24,39 @@ namespace Compression
 
 		private async void MainWindow_PreviewDrop(object sender, DragEventArgs e)
 		{
-			// this actually works
 			var files = e.Data.GetData(DataFormats.FileDrop) as string[];
 			if (files == null)
 				return;
 			var lastFile = files[files.Length - 1];
 
-			var file = File.Open(lastFile, FileMode.Open);
+			await DecompressToFile(lastFile, lastFile + ".uncompressed");
+		}
 
-			using (var decompressedFileStream = File.Create(file.Name + ".uncompressed"))
+		private static async Task DecompressToFile(string filePath, string decompressedFilePath)
+		{
+			var file = File.Open(filePath, FileMode.Open);
+
+			using (var decompressedFileStream = File.Create(decompressedFilePath))
 			{
 				using (var decompressionStream = new DeflateStream(file, CompressionMode.Decompress))
 				{
 					await decompressionStream.CopyToAsync(decompressedFileStream);
 				}
 			}
+		}
 
+		// UNTESTED
+		private static async Task CompressToFile(string filePath, string compressedFilePath)
+		{
+			var file = File.Open(filePath, FileMode.Open);
+
+			using (var compressedFileStream = File.Create(compressedFilePath))
+			{
+				using (var compressionStream = new DeflateStream(file, CompressionMode.Compress))
+				{
+					await compressionStream.CopyToAsync(compressedFileStream);
+				}
+			}
 		}
 	}
 }

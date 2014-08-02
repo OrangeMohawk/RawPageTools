@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashGetter", "HashGetter\Ha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compression", "Compression\Compression.csproj", "{EBAA1426-8746-4547-85BB-FBF3FD4C5031}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitmapSwizzler", "BitmapSwizzler\BitmapSwizzler.csproj", "{DFC2D6AA-D862-4496-A41E-02E0540E9399}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EBAA1426-8746-4547-85BB-FBF3FD4C5031}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBAA1426-8746-4547-85BB-FBF3FD4C5031}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBAA1426-8746-4547-85BB-FBF3FD4C5031}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFC2D6AA-D862-4496-A41E-02E0540E9399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFC2D6AA-D862-4496-A41E-02E0540E9399}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFC2D6AA-D862-4496-A41E-02E0540E9399}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFC2D6AA-D862-4496-A41E-02E0540E9399}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

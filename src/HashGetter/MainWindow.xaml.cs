@@ -38,6 +38,7 @@ namespace RawPageHashGetter
 			e.Handled = true;
 		}
 
+		// TODO: Try to make this async
 		private void GetHashes(byte[] bytes)
 		{
 			if (bytes.Length < 0x400)
