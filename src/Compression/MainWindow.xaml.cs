@@ -29,34 +29,7 @@ namespace Compression
 				return;
 			var lastFile = files[files.Length - 1];
 
-			await DecompressToFile(lastFile, lastFile + ".uncompressed");
-		}
-
-		private static async Task DecompressToFile(string filePath, string decompressedFilePath)
-		{
-			var file = File.Open(filePath, FileMode.Open);
-
-			using (var decompressedFileStream = File.Create(decompressedFilePath))
-			{
-				using (var decompressionStream = new DeflateStream(file, CompressionMode.Decompress))
-				{
-					await decompressionStream.CopyToAsync(decompressedFileStream);
-				}
-			}
-		}
-
-		// UNTESTED
-		private static async Task CompressToFile(string filePath, string compressedFilePath)
-		{
-			var file = File.Open(filePath, FileMode.Open);
-
-			using (var compressedFileStream = File.Create(compressedFilePath))
-			{
-				using (var compressionStream = new DeflateStream(file, CompressionMode.Compress))
-				{
-					await compressionStream.CopyToAsync(compressedFileStream);
-				}
-			}
+			await RawPageTools.Compression.DecompressToFileAsync(lastFile, lastFile + ".uncompressed");
 		}
 	}
 }
