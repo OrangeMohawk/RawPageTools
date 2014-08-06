@@ -2,12 +2,24 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using RawPageTools.Models;
 
 namespace RawPageTools
 {
 	public static class Hashing
 	{
 		private static readonly byte[] Salt = { 0xED, 0xD4, 0x30, 0x09, 0x66, 0x6D, 0x5C, 0x4A, 0x5C, 0x36, 0x57, 0xFA, 0xB4, 0x0E, 0x02, 0x2F, 0x53, 0x5A, 0xC6, 0xC9, 0xEE, 0x47, 0x1F, 0x01, 0xF1, 0xA4, 0x47, 0x56, 0xB7, 0x71, 0x4F, 0x1C, 0x36, 0xEC };
+
+		public static async Task<HashData> GetHashesAsync(byte[] bytes)
+		{
+			return new HashData
+			{
+				CRC = await GetCrcAsync(bytes),
+				EntireBufferHash = await GetEntireBufferHashAsync(bytes),
+				FirstChunkHash = await GetFirstChunkHashAsync(bytes),
+				LastChunkHash = await GetLastChunkHashAsync(bytes)
+			};
+		}
 
 		public static async Task<byte[]> GetEntireBufferHashAsync(byte[] bytes)
 		{

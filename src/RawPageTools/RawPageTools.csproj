@@ -41,7 +41,12 @@
   <ItemGroup>
     <Compile Include="Compression.cs" />
     <Compile Include="Hashing.cs" />
+    <Compile Include="Models\HashData.cs" />
+    <Compile Include="Models\NotifyPropertyChangedBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
