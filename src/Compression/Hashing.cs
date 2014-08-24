@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using RawPageTools.Exceptions;
-using RawPageTools.Models;
+using HashData = Compression.Models.HashData;
 
-namespace RawPageTools
+namespace Compression
 {
 	public static class Hashing
 	{
@@ -13,9 +12,6 @@ namespace RawPageTools
 
 		public static async Task<HashData> GetHashesAsync(byte[] bytes)
 		{
-			if (bytes.Length < 0x400)
-				throw new FileTooSmallException(string.Format("The file size is too small! It must be at least one kilobyte."));
-
 			return new HashData
 			{
 				CRC = await GetCrcAsync(bytes),

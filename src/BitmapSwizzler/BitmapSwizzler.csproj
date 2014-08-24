@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Blamite">
+      <HintPath>..\Libraries\Blamite.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -61,12 +64,19 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helpers\Enums.cs" />
+    <Compile Include="Helpers\TagContainerHelper.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\BitmapInfo.cs" />
+    <Compile Include="Models\Sequence.cs" />
+    <Compile Include="Models\RawInfo.cs" />
+    <Compile Include="Models\BitmapSubmap.cs" />
+    <Compile Include="Models\NotifyPropertyChangedBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

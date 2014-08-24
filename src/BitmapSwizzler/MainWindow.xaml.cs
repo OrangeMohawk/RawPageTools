@@ -1,5 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Windows;
+using System.Windows.Documents;
+using BitmapSwizzler.Helpers;
+using BitmapSwizzler.Models;
+using Blamite.Blam;
+using Blamite.Blam.Resources;
+using Blamite.Injection;
+using Blamite.IO;
 
 namespace BitmapSwizzler
 {
@@ -13,135 +24,99 @@ namespace BitmapSwizzler
 			InitializeComponent();
 		}
 
-		private enum TextureFormat
+		private void MainWindow_PreviewDragEnter(object sender, DragEventArgs e)
 		{
-			// ReSharper disable InconsistentNaming
-			A8R8G8B8,
-			AY8,
-			CTX1,
-			DXN,
-			DXN_mono_alpha,
-			DXT1,
-			DXT3,
-			DXT3a_alpha,
-			DXT3a_mono,
-			DXT5,
-			DXT5a_alpha,
-			DXT5a_mono,
-			Unknown31,
-			Y8
-			// ReSharper restore InconsistentNaming
+			if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
+				e.Effects = DragDropEffects.Move;
+			e.Handled = true;
 		}
 
-		private static byte[] ModifyLinearTexture(byte[] data, int width, int height, TextureFormat texture, bool toLinear)
+		private async void MainWindow_PreviewDrop(object sender, DragEventArgs e)
 		{
-			var destinationArray = new byte[data.Length];
+			var files = e.Data.GetData(DataFormats.FileDrop) as string[];
+			if (files == null)
+				return;
+			var lastFile = files[files.Length - 1];
 
-			int num1, num2, num3;
+			var container = TagContainerHelper.OpenReader(lastFile);
 
-			switch (texture)
+			var bitmapInfo = TagContainerHelper.GetInfo(container);
+
+			for (var i = 0; i < bitmapInfo.Count; i++)
 			{
-				case TextureFormat.DXT5a_mono:
-				case TextureFormat.DXT5a_alpha:
-				case TextureFormat.DXT1:
-				case TextureFormat.CTX1:
-				case TextureFormat.Unknown31:
-				case TextureFormat.DXT3a_alpha:
-				case TextureFormat.DXT3a_mono:
-					num1 = 4;
-					num2 = 4;
-					num3 = 8;
-					break;
+				byte[] data;
 
-				case TextureFormat.DXT3:
-				case TextureFormat.DXT5:
-				case TextureFormat.DXN:
-				case TextureFormat.DXN_mono_alpha:
-					num1 = 4;
-					num2 = 4;
-					num3 = 16;
-					break;
+				ushort assetSalt = 0xFFFF;
+				ushort assetIndex = 0xFFFF;
+				var rawLength = 0;
+				var offset = 0;
 
-				case TextureFormat.AY8:
-				case TextureFormat.Y8:
-					num1 = 1;
-					num2 = 1;
-					num3 = 1;
-					break;
-
-				case TextureFormat.A8R8G8B8:
-					num1 = 1;
-					num2 = 1;
-					num3 = 4;
-					break;
-
-				default:
-					num1 = 1;
-					num2 = 1;
-					num3 = 2;
-					break;
-			}
-
-			var xChunks = width / num1;
-			var yChunks = height / num2;
-			try
-			{
-				for (var i = 0; i < yChunks; i++)
+				// Get our raw id
+				if (bitmapInfo[i].NormalRawInfo.Count != 0)
 				{
-					for (var j = 0; j < xChunks; j++)
+					assetSalt = bitmapInfo[i].NormalRawInfo[0].AssetSalt;
+					assetIndex = bitmapInfo[i].NormalRawInfo[0].AssetIndex;
+					rawLength = bitmapInfo[i].SubMaps[0].RawLength;
+				}
+
+				else if (bitmapInfo[i].InterleavedRawInfo.Count != 0)
+				{
+					assetSalt = bitmapInfo[i].InterleavedRawInfo[bitmapInfo[i].SubMaps[0].Index1].AssetSalt;
+					assetIndex = bitmapInfo[i].InterleavedRawInfo[bitmapInfo[i].SubMaps[0].Index1].AssetIndex;
+
+					for (var x = 0; x < bitmapInfo[i].SubMaps.Count; x++)
 					{
-						var offset = (i * xChunks) + j;
-						var num9 = XGAddress2DTiledX(offset, xChunks, num3);
-						var num10 = XGAddress2DTiledY(offset, xChunks, num3);
-						var sourceIndex = ((i * xChunks) * num3) + (j * num3);
-						var destinationIndex = ((num10 * xChunks) * num3) + (num9 * num3);
-						if (toLinear)
-							Array.Copy(data, sourceIndex, destinationArray, destinationIndex, num3);
-						else
-							Array.Copy(data, destinationIndex, destinationArray, sourceIndex, num3);
+						if (bitmapInfo[i].SubMaps[x].Index1 == bitmapInfo[i].SubMaps[0].Index1)
+						{
+							rawLength += bitmapInfo[i].SubMaps[x].RawLength;
+
+							if (x == 0)
+								break;
+
+							offset += bitmapInfo[i].SubMaps[x].RawLength;
+						}
 					}
 				}
+
+				else if (bitmapInfo[i].UnknownRawInfo.Count != 0)
+				{
+					assetSalt = bitmapInfo[i].UnknownRawInfo[bitmapInfo[i].SubMaps[0].Index1].AssetSalt;
+					assetIndex = bitmapInfo[i].UnknownRawInfo[bitmapInfo[i].SubMaps[0].Index1].AssetIndex;
+
+					for (var x = 0; x < bitmapInfo[i].SubMaps.Count; x++)
+					{
+						if (bitmapInfo[i].SubMaps[x].Index1 == bitmapInfo[i].SubMaps[0].Index1)
+						{
+							rawLength += bitmapInfo[i].SubMaps[x].RawLength;
+
+							if (x == 0)
+								break;
+
+							offset += bitmapInfo[i].SubMaps[x].RawLength;
+						}
+					}
+				}
+
+				if (assetSalt == 0xFFFF && assetIndex == 0xFFFF)
+					data = new byte[0];
+
+				var resourceInfo = container.FindResource(new DatumIndex(assetSalt, assetIndex));
+
+				ResourcePage page1, page2;
+
+				try
+				{
+
+					page1 = container.FindResourcePage(resourceInfo.Location.OriginalPrimaryPageIndex);
+					page2 = container.FindResourcePage(resourceInfo.Location.OriginalSecondaryPageIndex);
+				}
+				catch (Exception)
+				{
+					
+				}
+
+
 			}
-			catch { }
-			return destinationArray;
-		}
-
-		// ReSharper disable InconsistentNaming
-		private static int XGAddress2DTiledX(int offset, int width, int texelPitch)
-		{
-			var alignedWidth = (width + 31) & ~31;
-
-			var logBPP = (texelPitch >> 2) + ((texelPitch >> 1) >> (texelPitch >> 2));
-			// ReSharper restore InconsistentNaming
-			var offsetB = offset << logBPP;
-			var offsetT = (((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2)) + (offsetB & 63);
-			var offsetM = offsetT >> (7 + logBPP);
-
-			var macroX = (offsetM % (alignedWidth >> 5)) << 2;
-			var tile = (((offsetT >> (5 + logBPP)) & 2) + (offsetB >> 6)) & 3;
-			var macro = (macroX + tile) << 3;
-			var micro = ((((offsetT >> 1) & ~15) + (offsetT & 15)) & ((texelPitch << 3) - 1)) >> logBPP;
-
-			return (macro + micro);
-		}
-
-		// ReSharper disable InconsistentNaming
-		private static int XGAddress2DTiledY(int offset, int width, int texelPitch)
-		{
-			var alignedWidth = (width + 31) & ~31;
-
-			var logBPP = (texelPitch >> 2) + ((texelPitch >> 1) >> (texelPitch >> 2));
-			// ReSharper restore InconsistentNaming
-			var offsetB = offset << logBPP;
-			var offsetT = (((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2)) + (offsetB & 63);
-			var offsetM = offsetT >> (7 + logBPP);
-
-			var macroY = (offsetM / (alignedWidth >> 5)) << 2;
-			var tile = ((offsetT >> (6 + logBPP)) & 1) + ((offsetB & 2048) >> 10);
-			var macro = (macroY + tile) << 3;
-			var micro = (((offsetT & (((texelPitch << 6) - 1) & ~31)) + ((offsetT & 15) << 1)) >> (3 + logBPP)) & ~1;
-
-			return ((macro + micro) + ((offsetT & 16) >> 4));
 		}
 	}
 }
