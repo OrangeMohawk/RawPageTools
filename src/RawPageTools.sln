@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30324.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashGetter", "HashGetter\HashGetter.csproj", "{ED6F8550-70BC-48D2-8790-C61640F6DEDE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compression", "Compression\Compression.csproj", "{EBAA1426-8746-4547-85BB-FBF3FD4C5031}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitmapSwizzler", "BitmapSwizzler\BitmapSwizzler.csproj", "{DFC2D6AA-D862-4496-A41E-02E0540E9399}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RawPageTools", "RawPageTools\RawPageTools.csproj", "{1270CADA-ABEE-410B-ACF0-582D548AA979}"
 EndProject
@@ -21,14 +17,6 @@ Global
 		{ED6F8550-70BC-48D2-8790-C61640F6DEDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED6F8550-70BC-48D2-8790-C61640F6DEDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED6F8550-70BC-48D2-8790-C61640F6DEDE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EBAA1426-8746-4547-85BB-FBF3FD4C5031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EBAA1426-8746-4547-85BB-FBF3FD4C5031}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EBAA1426-8746-4547-85BB-FBF3FD4C5031}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EBAA1426-8746-4547-85BB-FBF3FD4C5031}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFC2D6AA-D862-4496-A41E-02E0540E9399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFC2D6AA-D862-4496-A41E-02E0540E9399}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFC2D6AA-D862-4496-A41E-02E0540E9399}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFC2D6AA-D862-4496-A41E-02E0540E9399}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1270CADA-ABEE-410B-ACF0-582D548AA979}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1270CADA-ABEE-410B-ACF0-582D548AA979}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1270CADA-ABEE-410B-ACF0-582D548AA979}.Release|Any CPU.ActiveCfg = Release|Any CPU
